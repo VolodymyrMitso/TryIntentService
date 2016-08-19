@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TryIntentService</string>
+    <string name="no_connection">App need network connection for first run.\nPlease turn on wi-fi or 3g/4g.\nPlease restart the app</string>
+</resources>
