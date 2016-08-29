@@ -29,7 +29,7 @@ public class Support {
         final PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(_context, Constants.ALARM_REQUEST_CODE, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         final AlarmManager alarmManager = (AlarmManager) _context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Constants.TIME_1_MINUTE, Constants.TIME_1_MINUTE, alarmPendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Constants.TIME_5_MINUTES, AlarmManager.INTERVAL_HALF_HOUR, alarmPendingIntent);
     }
 
     public boolean checkNetworkConnection(Context _context) {

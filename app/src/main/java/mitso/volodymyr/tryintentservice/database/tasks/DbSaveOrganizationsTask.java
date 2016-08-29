@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,33 +16,13 @@ import mitso.volodymyr.tryintentservice.constants.Constants;
 import mitso.volodymyr.tryintentservice.database.DatabaseHelper;
 import mitso.volodymyr.tryintentservice.models.Organization;
 
-public class DbSaveOrganizationsTask extends AsyncTask<Void, Void, Void> {
+public class DbSaveOrganizationsTask {
 
     public String                   LOG_TAG = Constants.DB_SAVE_ORGANIZATIONS_TASK_LOG_TAG;
 
-    public interface Callback {
-
-        void onSuccess();
-        void onFailure(Throwable _error);
-    }
-
-    private Callback                mCallback;
-    private Exception               mException;
     private DatabaseHelper          mDatabaseHelper;
     private SQLiteDatabase          mSQLiteDatabase;
     private List<Organization>      mOrganizationList;
-
-    public void setCallback(Callback _callback) {
-
-        if (mCallback == null)
-            mCallback = _callback;
-    }
-
-    public void releaseCallback() {
-
-        if (mCallback != null)
-            mCallback = null;
-    }
 
     public DbSaveOrganizationsTask(Context _context, List<Organization> _organizationList) {
 
@@ -51,8 +30,7 @@ public class DbSaveOrganizationsTask extends AsyncTask<Void, Void, Void> {
         this.mOrganizationList = _organizationList;
     }
 
-    @Override
-    protected Void doInBackground(Void ... _params) {
+    public void doInBackground() {
 
         try {
             mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
@@ -94,8 +72,8 @@ public class DbSaveOrganizationsTask extends AsyncTask<Void, Void, Void> {
 
         } catch (Exception _error) {
 
+            Log.e(LOG_TAG, "ERROR.");
             _error.printStackTrace();
-            mException = _error;
 
         } finally {
 
@@ -104,20 +82,6 @@ public class DbSaveOrganizationsTask extends AsyncTask<Void, Void, Void> {
 
             if (mDatabaseHelper != null)
                 mDatabaseHelper.close();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void _aVoid) {
-        super.onPostExecute(_aVoid);
-
-        if (mCallback != null) {
-            if (mException == null)
-                mCallback.onSuccess();
-            else
-                mCallback.onFailure(mException);
         }
     }
 }

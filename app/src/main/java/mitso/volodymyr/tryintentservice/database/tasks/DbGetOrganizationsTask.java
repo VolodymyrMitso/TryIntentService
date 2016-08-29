@@ -3,7 +3,7 @@ package mitso.volodymyr.tryintentservice.database.tasks;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -19,18 +19,10 @@ import mitso.volodymyr.tryintentservice.database.DatabaseHelper;
 import mitso.volodymyr.tryintentservice.models.Currency;
 import mitso.volodymyr.tryintentservice.models.Organization;
 
-public class DbGetOrganizationsTask extends AsyncTask<Void, Void, List<Organization>> {
+public class DbGetOrganizationsTask {
 
     public String                   LOG_TAG = Constants.DB_GET_ORGANIZATIONS_TASK_LOG_TAG;
 
-    public interface Callback{
-
-        void onSuccess(List<Organization> _result);
-        void onFailure(Throwable _error);
-    }
-
-    private Callback                mCallback;
-    private Exception               mException;
     private DatabaseHelper          mDatabaseHelper;
     private SQLiteDatabase          mSQLiteDatabase;
     private Cursor                  mCursor;
@@ -42,20 +34,7 @@ public class DbGetOrganizationsTask extends AsyncTask<Void, Void, List<Organizat
         this.mOrganizationList = new ArrayList<>();
     }
 
-    public void setCallback(Callback _callback) {
-
-        if (mCallback == null)
-            mCallback = _callback;
-    }
-
-    public void releaseCallback() {
-
-        if (mCallback != null)
-            mCallback = null;
-    }
-
-    @Override
-    protected List<Organization> doInBackground(Void ... _params) {
+    public List<Organization> doInBackground() {
 
         try {
             mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
@@ -112,8 +91,8 @@ public class DbGetOrganizationsTask extends AsyncTask<Void, Void, List<Organizat
 
         } catch (Exception _error) {
 
+            Log.e(LOG_TAG, "ERROR.");
             _error.printStackTrace();
-            mException = _error;
 
         } finally {
 
@@ -127,18 +106,6 @@ public class DbGetOrganizationsTask extends AsyncTask<Void, Void, List<Organizat
                 mDatabaseHelper.close();
         }
 
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(List<Organization> _organizationList) {
-        super.onPostExecute(_organizationList);
-
-        if (mCallback != null) {
-            if (mException == null)
-                mCallback.onSuccess(mOrganizationList);
-            else
-                mCallback.onFailure(mException);
-        }
+        return mOrganizationList;
     }
 }

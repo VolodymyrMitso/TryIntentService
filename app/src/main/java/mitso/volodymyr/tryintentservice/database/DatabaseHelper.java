@@ -35,17 +35,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static DatabaseHelper instance;
 
+    private DatabaseHelper(Context _context) {
+
+        super(_context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
     public static synchronized DatabaseHelper getDatabaseHelper(Context _context) {
 
         if (instance == null)
             instance = new DatabaseHelper(_context);
 
         return instance;
-    }
-
-    private DatabaseHelper(Context _context) {
-
-        super(_context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

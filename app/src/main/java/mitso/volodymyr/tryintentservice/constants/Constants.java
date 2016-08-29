@@ -4,7 +4,7 @@ public class Constants {
 
     public static final int ALARM_REQUEST_CODE = 789;
 
-    public static final int TIME_1_MINUTE = 60 * 1000;
+    public static final int TIME_5_MINUTES = 5 * 60 * 1000;
 
 
 

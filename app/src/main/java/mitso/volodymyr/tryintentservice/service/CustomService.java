@@ -35,13 +35,11 @@ public class CustomService extends IntentService {
 
     public CustomService() {
 
-        super("CustomService");
+        super(CustomService.class.getSimpleName());
     }
 
     @Override
     protected void onHandleIntent(final Intent _intent) {
-
-        // TODO: handle all on failure scenarios.
 
         mSupport = new Support();
 
@@ -114,139 +112,72 @@ public class CustomService extends IntentService {
 
     private void resultReceiverSendResult(List<Organization> _organizationList) {
 
+        Log.i(LOG_TAG, "SENDING RESULT ...");
+
         mBundle.putParcelableArrayList(Constants.RESULT_BUNDLE_KEY, new ArrayList<>(_organizationList));
         mResultReceiver.send(Constants.SUCCESS_RESULT_CODE, mBundle);
-
-        Log.i(LOG_TAG, "RESULT IS SEND.");
     }
 
     public void apiGetOrganizations() {
 
         final ApiGetOrganizationsTask apiGetOrganizationsTask = new ApiGetOrganizationsTask();
-        apiGetOrganizationsTask.setCallback(new ApiGetOrganizationsTask.Callback() {
+        final List<Organization> result = apiGetOrganizationsTask.doInBackground();
+        Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
-            @Override
-            public void onSuccess(List<Organization> _result) {
+        mApiOrganizationList = mSupport.deleteNullPropertiesObjects(result);
+        Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
 
-                Log.i(apiGetOrganizationsTask.LOG_TAG, "ON SUCCESS.");
-                Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(_result.size()) + ".");
+        if (isDatabaseCreated) {
 
-                mApiOrganizationList = mSupport.deleteNullPropertiesObjects(_result);
+            databaseGetOrganizations();
 
-                Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
-                Log.i(LOG_TAG, mApiOrganizationList.get(0).toString());
-                Log.i(LOG_TAG, mApiOrganizationList.get(mApiOrganizationList.size() - 1).toString());
+        } else {
 
-                if (isDatabaseCreated) {
-
-                    databaseGetOrganizations();
-
-                } else {
-
-                    databaseSaveOrganizations(mApiOrganizationList);
-                }
-
-                apiGetOrganizationsTask.releaseCallback();
-            }
-
-            @Override
-            public void onFailure(Throwable _error) {
-
-                Log.e(apiGetOrganizationsTask.LOG_TAG, "ON FAILURE.");
-                _error.printStackTrace();
-
-                apiGetOrganizationsTask.releaseCallback();
-            }
-        });
-
-        apiGetOrganizationsTask.execute();
+            databaseSaveOrganizations(mApiOrganizationList);
+        }
     }
 
     private void databaseGetOrganizations() {
 
         final DbGetOrganizationsTask dbGetOrganizationsTask = new DbGetOrganizationsTask(CustomService.this);
-        dbGetOrganizationsTask.setCallback(new DbGetOrganizationsTask.Callback() {
+        final List<Organization> result = dbGetOrganizationsTask.doInBackground();
+        Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()));
 
-            @Override
-            public void onSuccess(List<Organization> _result) {
+        mDbOrganizationList = result;
+        Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
 
-                Log.i(dbGetOrganizationsTask.LOG_TAG, "ON SUCCESS.");
-                Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(_result.size()));
+        if (isNetworkOnline) {
 
-                mDbOrganizationList = _result;
+            final boolean areDatesTheSame = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
+            Log.i(LOG_TAG, "DATE ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
 
-                Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
-                Log.i(LOG_TAG, mDbOrganizationList.get(0).toString());
-                Log.i(LOG_TAG, mDbOrganizationList.get(mDbOrganizationList.size() - 1).toString());
+            if (areDatesTheSame) {
 
-                if (isNetworkOnline) {
+                if (!isResultReceiverNull)
+                    resultReceiverSendResult(mDbOrganizationList);
 
-                    final boolean areDatesTheSame = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
+            } else {
 
-                    Log.i(LOG_TAG, "DATE ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
+                mCombinedOrganizationList = mSupport.combineOrganizations(mDbOrganizationList, mApiOrganizationList);
+                Log.i(LOG_TAG, "COMBINED LIST SIZE: " + String.valueOf(mCombinedOrganizationList.size()) + ".");
 
-                    if (areDatesTheSame) {
-
-                        if (!isResultReceiverNull)
-                            resultReceiverSendResult(mDbOrganizationList);
-
-                    } else {
-
-                        mCombinedOrganizationList = mSupport.combineOrganizations(mDbOrganizationList, mApiOrganizationList);
-
-                        Log.i(LOG_TAG, "COMBINED LIST SIZE: " + String.valueOf(mCombinedOrganizationList.size()) + ".");
-
-                        databaseSaveOrganizations(mCombinedOrganizationList);
-                    }
-
-                } else {
-
-                    if (!isResultReceiverNull)
-                        resultReceiverSendResult(mDbOrganizationList);
-                }
-
-                dbGetOrganizationsTask.releaseCallback();
+                databaseSaveOrganizations(mCombinedOrganizationList);
             }
 
-            @Override
-            public void onFailure(Throwable _error) {
+        } else {
 
-                Log.e(dbGetOrganizationsTask.LOG_TAG, "ON FAILURE.");
-                _error.printStackTrace();
-
-                dbGetOrganizationsTask.releaseCallback();
-            }
-        });
-
-        dbGetOrganizationsTask.execute();
+            if (!isResultReceiverNull)
+                resultReceiverSendResult(mDbOrganizationList);
+        }
     }
 
     public void databaseSaveOrganizations(final List<Organization> _organizationList) {
 
         final DbSaveOrganizationsTask dbSaveOrganizationsTask = new DbSaveOrganizationsTask(CustomService.this, _organizationList);
-        dbSaveOrganizationsTask.setCallback(new DbSaveOrganizationsTask.Callback() {
+        dbSaveOrganizationsTask.doInBackground();
+        Log.i(dbSaveOrganizationsTask.LOG_TAG, "DONE.");
 
-            @Override
-            public void onSuccess() {
-
-                Log.i(dbSaveOrganizationsTask.LOG_TAG, "ON SUCCESS.");
-
-                if (!isResultReceiverNull)
-                    resultReceiverSendResult(_organizationList);
-
-                dbSaveOrganizationsTask.releaseCallback();
-            }
-
-            @Override
-            public void onFailure(Throwable _error) {
-
-                Log.e(dbSaveOrganizationsTask.LOG_TAG, "ON FAILURE.");
-                _error.printStackTrace();
-
-                dbSaveOrganizationsTask.releaseCallback();
-            }
-        });
-
-        dbSaveOrganizationsTask.execute();
+        if (!isResultReceiverNull)
+            resultReceiverSendResult(_organizationList);
     }
 }

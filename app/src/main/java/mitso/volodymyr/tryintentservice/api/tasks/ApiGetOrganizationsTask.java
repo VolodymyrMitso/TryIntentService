@@ -1,6 +1,6 @@
 package mitso.volodymyr.tryintentservice.api.tasks;
 
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,34 +16,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiGetOrganizationsTask extends AsyncTask<Void, Void, List<Organization>> {
+public class ApiGetOrganizationsTask {
 
     public String                   LOG_TAG = Constants.API_GET_ORGANIZATIONS_TASK_LOG_TAG;
 
-    public interface Callback{
-
-        void onSuccess(List<Organization> _result);
-        void onFailure(Throwable _error);
-    }
-
     private List<Organization>      mOrganizationList;
-    private Callback                mCallback;
-    private Exception               mException;
 
-    public void setCallback(Callback _callback) {
-
-        if (mCallback == null)
-            mCallback = _callback;
-    }
-
-    public void releaseCallback() {
-
-        if (mCallback != null)
-            mCallback = null;
-    }
-
-    @Override
-    protected List<Organization> doInBackground(Void... _voids) {
+    public List<Organization> doInBackground() {
 
         try {
             final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -65,22 +44,10 @@ public class ApiGetOrganizationsTask extends AsyncTask<Void, Void, List<Organiza
 
         } catch (Exception _error) {
 
+            Log.e(LOG_TAG, "ERROR.");
             _error.printStackTrace();
-            mException = _error;
         }
 
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(List<Organization> _organizationList) {
-        super.onPostExecute(_organizationList);
-
-        if (mCallback != null) {
-            if (mException == null)
-                mCallback.onSuccess(mOrganizationList);
-            else
-                mCallback.onFailure(mException);
-        }
+        return mOrganizationList;
     }
 }

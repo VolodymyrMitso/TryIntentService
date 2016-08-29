@@ -17,11 +17,11 @@ import mitso.volodymyr.tryintentservice.support.Support;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String            LOG_TAG = Constants.MAIN_ACTIVITY_LOG_TAG;
+    private final String                LOG_TAG = Constants.MAIN_ACTIVITY_LOG_TAG;
 
-    private Support                 mSupport;
+    private Support                     mSupport;
 
-    private ServiceResultReceiver mServiceResultReceiver;
+    private ServiceResultReceiver       mServiceResultReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (organizationList != null) {
 
-                        Log.i(LOG_TAG, String.valueOf(organizationList.size()));
+                        Log.i(LOG_TAG, String.valueOf(organizationList.size()) + ".");
 
                         Log.i(LOG_TAG, organizationList.get(0).toString());
                         Log.i(LOG_TAG, organizationList.get(organizationList.size() - 1).toString());
@@ -59,18 +59,9 @@ public class MainActivity extends AppCompatActivity {
                         final TextView textView2 = (TextView) findViewById(R.id.tv2);
                         textView2.setText(organizationList.get(organizationList.size() - 1).toString());
                     }
-
-                } else if (_resultCode == Constants.FAILURE_RESULT_CODE) {
-
-                    Log.i(mServiceResultReceiver.LOG_TAG, "ERROR IS RECEIVED.");
-
-                    final Exception error = (Exception) _resultData.getSerializable(Constants.ERROR_BUNDLE_KEY);
-
-                    if (error != null)
-                        error.printStackTrace();
                 }
 
-//                mSupport.scheduleAlarm(MainActivity.this);
+                mSupport.scheduleAlarm(MainActivity.this);
 
                 mServiceResultReceiver.releaseCallback();
             }
