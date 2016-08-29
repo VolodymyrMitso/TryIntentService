@@ -20,6 +20,7 @@ public class JsonData implements Serializable {
 
     @Override
     public String toString() {
+
         return "JsonData{" +
                 ", date='" + date + '\'' +
                 ", jsonOrganizations=" + jsonOrganizations +

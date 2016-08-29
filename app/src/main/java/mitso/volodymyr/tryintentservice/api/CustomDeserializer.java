@@ -35,7 +35,6 @@ public class CustomDeserializer implements JsonDeserializer<List<Organization>> 
     private Map<String, String>             mCitiesMap;
 
     private Map<Integer, List<Currency>>    mCurrencyListMap;
-    private List<Currency>                  mCurrencyList;
 
     private List<Organization>              mOrganizationList;
 
@@ -84,7 +83,7 @@ public class CustomDeserializer implements JsonDeserializer<List<Organization>> 
                     .getJSONObject(i)
                     .getJSONObject(Constants.CURRENCIES_KEY);
 
-            mCurrencyList = new ArrayList<>();
+            final List<Currency> currencyList = new ArrayList<>();
 
             for (String key : mCurrenciesMap.keySet()) {
 
@@ -96,11 +95,11 @@ public class CustomDeserializer implements JsonDeserializer<List<Organization>> 
                     currency.setName(mCurrenciesMap.get(key));
                     currency.setAbbreviation(key);
 
-                    mCurrencyList.add(currency);
+                    currencyList.add(currency);
                 }
             }
 
-            mCurrencyListMap.put(i, mCurrencyList);
+            mCurrencyListMap.put(i, currencyList);
         }
     }
 

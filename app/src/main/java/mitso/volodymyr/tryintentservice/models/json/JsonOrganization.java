@@ -17,6 +17,7 @@ public class JsonOrganization implements Serializable {
 
     @Override
     public String toString() {
+
         return "JsonOrganization{" +
                 "id='" + id + '\'' +
                 ", oldId=" + oldId +
@@ -39,27 +40,27 @@ public class JsonOrganization implements Serializable {
         this.id = id;
     }
 
-    public Integer getOldId() {
+    public int getOldId() {
         return oldId;
     }
 
-    public void setOldId(Integer oldId) {
+    public void setOldId(int oldId) {
         this.oldId = oldId;
     }
 
-    public Integer getOrgType() {
+    public int getOrgType() {
         return orgType;
     }
 
-    public void setOrgType(Integer orgType) {
+    public void setOrgType(int orgType) {
         this.orgType = orgType;
     }
 
-    public Boolean getBranch() {
+    public boolean isBranch() {
         return branch;
     }
 
-    public void setBranch(Boolean branch) {
+    public void setBranch(boolean branch) {
         this.branch = branch;
     }
 
@@ -109,21 +110,5 @@ public class JsonOrganization implements Serializable {
 
     public void setLink(String link) {
         this.link = link;
-    }
-
-    public void setOldId(int oldId) {
-        this.oldId = oldId;
-    }
-
-    public void setOrgType(int orgType) {
-        this.orgType = orgType;
-    }
-
-    public boolean isBranch() {
-        return branch;
-    }
-
-    public void setBranch(boolean branch) {
-        this.branch = branch;
     }
 }

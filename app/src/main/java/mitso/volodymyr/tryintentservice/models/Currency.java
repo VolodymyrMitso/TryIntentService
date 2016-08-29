@@ -17,20 +17,13 @@ public class Currency implements Serializable {
 
     @Override
     public String toString() {
+
         return "Currency{" +
                 "name='" + name + '\'' +
                 ", abbreviation='" + abbreviation + '\'' +
                 ", purchase=" + purchase +
                 ", sale=" + sale +
                 '}';
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
     }
 
     public String getName() {
@@ -41,12 +34,12 @@ public class Currency implements Serializable {
         this.name = name;
     }
 
-    public double getSale() {
-        return sale;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setSale(double sale) {
-        this.sale = sale;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
     public double getPurchase() {
@@ -55,5 +48,13 @@ public class Currency implements Serializable {
 
     public void setPurchase(double purchase) {
         this.purchase = purchase;
+    }
+
+    public double getSale() {
+        return sale;
+    }
+
+    public void setSale(double sale) {
+        this.sale = sale;
     }
 }

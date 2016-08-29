@@ -25,86 +25,6 @@ public class Organization implements Parcelable, Comparable<Organization> {
 
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public Organization(Parcel in) {
-
-        id = in.readString();
-        name = in.readString();
-        type = in.readString();
-        region = in.readString();
-        city = in.readString();
-        address = in.readString();
-        phone = in.readString();
-        link = in.readString();
-        if (in.readByte() == 0x01) {
-            currencies = new ArrayList<>();
-            in.readList(currencies, Currency.class.getClassLoader());
-        } else {
-            currencies = null;
-        }
-        long tmpDate = in.readLong();
-        date = tmpDate != -1 ? new Date(tmpDate) : null;
-    }
-
-    @Override
-    public int describeContents() {
-
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(type);
-        dest.writeString(region);
-        dest.writeString(city);
-        dest.writeString(address);
-        dest.writeString(phone);
-        dest.writeString(link);
-        if (currencies == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(currencies);
-        }
-        dest.writeLong(date != null ? date.getTime() : -1L);
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Organization> CREATOR = new Parcelable.Creator<Organization>() {
-
-        @Override
-        public Organization createFromParcel(Parcel in) {
-            return new Organization(in);
-        }
-
-        @Override
-        public Organization[] newArray(int size) {
-            return new Organization[size];
-        }
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public String toString() {
-        return "Organization{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", type='" + type + '\'' +
-                ", region='" + region + '\'' +
-                ", city='" + city + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", link='" + link + '\'' +
-                ", currencies=" + currencies +
-                ", date=" + date +
-                '}';
-    }
-
     @Override
     public boolean equals(Object _object) {
 
@@ -130,13 +50,87 @@ public class Organization implements Parcelable, Comparable<Organization> {
         return this.getName().toLowerCase().compareTo(_that.getName().toLowerCase());
     }
 
-    public String getType() {
-        return type;
+    @Override
+    public String toString() {
+
+        return "Organization{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", region='" + region + '\'' +
+                ", city='" + city + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", link='" + link + '\'' +
+                ", currencies=" + currencies +
+                ", date=" + date +
+                '}';
     }
 
-    public void setType(String type) {
-        this.type = type;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected Organization(Parcel _in) {
+
+        id = _in.readString();
+        name = _in.readString();
+        type = _in.readString();
+        region = _in.readString();
+        city = _in.readString();
+        address = _in.readString();
+        phone = _in.readString();
+        link = _in.readString();
+        if (_in.readByte() == 0x01) {
+            currencies = new ArrayList<>();
+            _in.readList(currencies, Currency.class.getClassLoader());
+        } else {
+            currencies = null;
+        }
+        long tmpDate = _in.readLong();
+        date = tmpDate != -1 ? new Date(tmpDate) : null;
     }
+
+    @Override
+    public int describeContents() {
+
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel _dest, int _flags) {
+
+        _dest.writeString(id);
+        _dest.writeString(name);
+        _dest.writeString(type);
+        _dest.writeString(region);
+        _dest.writeString(city);
+        _dest.writeString(address);
+        _dest.writeString(phone);
+        _dest.writeString(link);
+        if (currencies == null) {
+            _dest.writeByte((byte) (0x00));
+        } else {
+            _dest.writeByte((byte) (0x01));
+            _dest.writeList(currencies);
+        }
+        _dest.writeLong(date != null ? date.getTime() : -1L);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Organization> CREATOR = new Parcelable.Creator<Organization>() {
+
+        @Override
+        public Organization createFromParcel(Parcel in) {
+            return new Organization(in);
+        }
+
+        @Override
+        public Organization[] newArray(int size) {
+            return new Organization[size];
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     public String getId() {
         return id;
@@ -152,6 +146,14 @@ public class Organization implements Parcelable, Comparable<Organization> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getRegion() {

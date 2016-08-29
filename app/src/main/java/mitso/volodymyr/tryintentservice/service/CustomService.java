@@ -49,7 +49,7 @@ public class CustomService extends IntentService {
 
         if (mSupport.checkDatabaseExistence(this)) {
 
-            Log.i(LOG_TAG, "DATABASE EXISTS.");
+            Log.i(LOG_TAG, "DATABASE IS CREATED.");
             isDatabaseCreated = true;
 
             if (mSupport.checkNetworkConnection(this)) {
@@ -57,7 +57,7 @@ public class CustomService extends IntentService {
                 Log.i(LOG_TAG, "NETWORK IS ONLINE.");
                 isNetworkOnline = true;
 
-                // necessarily: api get, db get, unite, db save.
+                // necessarily: api get, db get, check date, unite, db save.
                 // if activity is running: send result.
 
                 apiGetOrganizations();
@@ -75,7 +75,7 @@ public class CustomService extends IntentService {
 
         } else {
 
-            Log.i(LOG_TAG, "DATABASE DOESN'T EXIST.");
+            Log.i(LOG_TAG, "DATABASE IS NOT CREATED.");
             isDatabaseCreated = false;
 
             if (mSupport.checkNetworkConnection(this)) {
@@ -112,15 +112,12 @@ public class CustomService extends IntentService {
             isResultReceiverNull = true;
     }
 
-    private void resultReceiverSendResult(int _resultCode, List<Organization> _organizationList, Exception _error) {
+    private void resultReceiverSendResult(List<Organization> _organizationList) {
 
-        if (_resultCode == Constants.SUCCESS_RESULT_CODE)
-            mBundle.putParcelableArrayList(Constants.RESULT_BUNDLE_KEY, new ArrayList<>(_organizationList));
+        mBundle.putParcelableArrayList(Constants.RESULT_BUNDLE_KEY, new ArrayList<>(_organizationList));
+        mResultReceiver.send(Constants.SUCCESS_RESULT_CODE, mBundle);
 
-        else if (_resultCode == Constants.FAILURE_RESULT_CODE)
-            mBundle.putSerializable(Constants.ERROR_BUNDLE_KEY, _error);
-
-        mResultReceiver.send(_resultCode, mBundle);
+        Log.i(LOG_TAG, "RESULT IS SEND.");
     }
 
     public void apiGetOrganizations() {
@@ -137,6 +134,8 @@ public class CustomService extends IntentService {
                 mApiOrganizationList = mSupport.deleteNullPropertiesObjects(_result);
 
                 Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
+                Log.i(LOG_TAG, mApiOrganizationList.get(0).toString());
+                Log.i(LOG_TAG, mApiOrganizationList.get(mApiOrganizationList.size() - 1).toString());
 
                 if (isDatabaseCreated) {
 
@@ -177,19 +176,33 @@ public class CustomService extends IntentService {
                 mDbOrganizationList = _result;
 
                 Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
+                Log.i(LOG_TAG, mDbOrganizationList.get(0).toString());
+                Log.i(LOG_TAG, mDbOrganizationList.get(mDbOrganizationList.size() - 1).toString());
 
                 if (isNetworkOnline) {
 
-                    mCombinedOrganizationList = mSupport.combineOrganizations(mDbOrganizationList, mApiOrganizationList);
+                    final boolean areDatesTheSame = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
 
-                    Log.i(LOG_TAG, "COMBINED LIST SIZE: " + String.valueOf(mCombinedOrganizationList.size()) + ".");
+                    Log.i(LOG_TAG, "DATE ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
 
-                    databaseSaveOrganizations(mCombinedOrganizationList);
+                    if (areDatesTheSame) {
+
+                        if (!isResultReceiverNull)
+                            resultReceiverSendResult(mDbOrganizationList);
+
+                    } else {
+
+                        mCombinedOrganizationList = mSupport.combineOrganizations(mDbOrganizationList, mApiOrganizationList);
+
+                        Log.i(LOG_TAG, "COMBINED LIST SIZE: " + String.valueOf(mCombinedOrganizationList.size()) + ".");
+
+                        databaseSaveOrganizations(mCombinedOrganizationList);
+                    }
 
                 } else {
 
                     if (!isResultReceiverNull)
-                        resultReceiverSendResult(Constants.SUCCESS_RESULT_CODE, mDbOrganizationList, null);
+                        resultReceiverSendResult(mDbOrganizationList);
                 }
 
                 dbGetOrganizationsTask.releaseCallback();
@@ -219,7 +232,7 @@ public class CustomService extends IntentService {
                 Log.i(dbSaveOrganizationsTask.LOG_TAG, "ON SUCCESS.");
 
                 if (!isResultReceiverNull)
-                    resultReceiverSendResult(Constants.SUCCESS_RESULT_CODE, _organizationList, null);
+                    resultReceiverSendResult(_organizationList);
 
                 dbSaveOrganizationsTask.releaseCallback();
             }

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (_resultCode == Constants.SUCCESS_RESULT_CODE) {
 
-                    Log.i(mServiceResultReceiver.LOG_TAG, "RESULT RECEIVED.");
+                    Log.i(mServiceResultReceiver.LOG_TAG, "RESULT IS RECEIVED.");
 
                     final List<Organization> organizationList = _resultData.getParcelableArrayList(Constants.RESULT_BUNDLE_KEY);
 
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (_resultCode == Constants.FAILURE_RESULT_CODE) {
 
-                    Log.i(mServiceResultReceiver.LOG_TAG, "ERROR RECEIVED.");
+                    Log.i(mServiceResultReceiver.LOG_TAG, "ERROR IS RECEIVED.");
 
                     final Exception error = (Exception) _resultData.getSerializable(Constants.ERROR_BUNDLE_KEY);
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import mitso.volodymyr.tryintentservice.R;
@@ -57,21 +58,32 @@ public class Support {
         });
     }
 
+    public boolean checkDatesEquality(List<Organization> _dbOrganizationList, List<Organization> _apiOrganizationList) {
+
+        Date latestDbDate = _dbOrganizationList.get(0).getDate();
+
+        for (int i = 0; i < _dbOrganizationList.size(); i++) {
+
+            final Organization organization = _dbOrganizationList.get(i);
+
+            if (organization.getDate().after(latestDbDate))
+                latestDbDate = organization.getDate();
+        }
+
+        final Date apiDate = _apiOrganizationList.get(0).getDate();
+
+        return latestDbDate.equals(apiDate);
+    }
+
     public List<Organization> combineOrganizations(List<Organization> _dbOrganizationList, List<Organization> _apiOrganizationList) {
 
-        List<Organization> combinedOrganizationList = new ArrayList<>();
+        if (_dbOrganizationList == null || _dbOrganizationList.isEmpty())
+            return new ArrayList<>(_apiOrganizationList);
 
-        if (_dbOrganizationList == null || _dbOrganizationList.isEmpty()) {
+        if (_apiOrganizationList == null || _apiOrganizationList.isEmpty())
+            return new ArrayList<>(_dbOrganizationList);
 
-            combinedOrganizationList = _apiOrganizationList;
-            return combinedOrganizationList;
-        }
-
-        if (_apiOrganizationList == null || _apiOrganizationList.isEmpty()) {
-
-            combinedOrganizationList = _dbOrganizationList;
-            return combinedOrganizationList;
-        }
+        final List<Organization> combinedOrganizationList = new ArrayList<>();
 
         combinedOrganizationList.addAll(_dbOrganizationList);
 
