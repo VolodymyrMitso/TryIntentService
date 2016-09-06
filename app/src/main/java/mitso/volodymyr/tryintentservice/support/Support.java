@@ -2,12 +2,12 @@ package mitso.volodymyr.tryintentservice.support;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
-import android.os.Looper;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,19 +46,13 @@ public class Support {
         return _context.getDatabasePath(DatabaseHelper.DATABASE_NAME).exists();
     }
 
-    public void showToastNetworkIsOffline(final Context _context) {
-
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-
-                Toast.makeText(_context, R.string.no_connection, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     public boolean checkDatesEquality(List<Organization> _dbOrganizationList, List<Organization> _apiOrganizationList) {
+
+        if (_dbOrganizationList == null || _dbOrganizationList.isEmpty())
+            return false;
+
+        if (_apiOrganizationList == null || _apiOrganizationList.isEmpty())
+            return false;
 
         Date latestDbDate = _dbOrganizationList.get(0).getDate();
 
@@ -143,5 +137,33 @@ public class Support {
         }
 
         return checkedOrganizationList;
+    }
+
+    public void showProgressDialog(ProgressDialog _progressDialog) {
+
+        if (_progressDialog != null) {
+
+            _progressDialog.setCancelable(false);
+            _progressDialog.show();
+            _progressDialog.setContentView(R.layout.dialog_progress);
+        }
+    }
+
+    public void dismissProgressDialog(final ProgressDialog _progressDialog) {
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (_progressDialog != null && _progressDialog.isShowing())
+                    _progressDialog.dismiss();
+            }
+        }, Constants.TIME_333_MS);
+    }
+
+    public void showToastFirstRun(final Context _context) {
+
+        Toast.makeText(_context, R.string.first_run, Toast.LENGTH_LONG).show();
     }
 }

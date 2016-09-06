@@ -92,7 +92,7 @@ public class CustomService extends IntentService {
                 // if activity is running: show toast.
 
                 if (!isResultReceiverNull)
-                    mSupport.showToastNetworkIsOffline(CustomService.this);
+                    resultReceiverSendResult(new ArrayList<Organization>());
             }
         }
     }
@@ -112,7 +112,7 @@ public class CustomService extends IntentService {
 
     private void resultReceiverSendResult(List<Organization> _organizationList) {
 
-        Log.i(LOG_TAG, "SENDING RESULT ...");
+        Log.i(LOG_TAG, "RESULT IS SENT.");
 
         mBundle.putParcelableArrayList(Constants.RESULT_BUNDLE_KEY, new ArrayList<>(_organizationList));
         mResultReceiver.send(Constants.SUCCESS_RESULT_CODE, mBundle);
@@ -124,8 +124,17 @@ public class CustomService extends IntentService {
         final List<Organization> result = apiGetOrganizationsTask.doInBackground();
         Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
-        mApiOrganizationList = mSupport.deleteNullPropertiesObjects(result);
-        Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
+        if (result != null && !result.isEmpty()) {
+
+            mApiOrganizationList = mSupport.deleteNullPropertiesObjects(result);
+            Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
+
+        } else {
+
+            Log.e(LOG_TAG, "API LIST IS NULL OR EMPTY.");
+        }
+
+        // TODO: handle null or empty api list scenario.
 
         if (isDatabaseCreated) {
 
@@ -143,8 +152,17 @@ public class CustomService extends IntentService {
         final List<Organization> result = dbGetOrganizationsTask.doInBackground();
         Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()));
 
-        mDbOrganizationList = result;
-        Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
+        if (result != null && !result.isEmpty()) {
+
+            mDbOrganizationList = result;
+            Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
+
+        } else {
+
+            Log.e(LOG_TAG, "DB LIST IS NULL OR EMPTY.");
+        }
+
+        // TODO: handle null or empty db list scenario.
 
         if (isNetworkOnline) {
 

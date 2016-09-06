@@ -6,6 +6,7 @@ public class Constants {
 
     public static final int TIME_5_MINUTES = 5 * 60 * 1000;
 
+    public static final long TIME_333_MS = 333;
 
 
     public static final String CUSTOM_SERVICE_LOG_TAG                   = "_____CUSTOM_SERVICE_LOG_TAG";
