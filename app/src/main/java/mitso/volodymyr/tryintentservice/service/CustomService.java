@@ -122,9 +122,10 @@ public class CustomService extends IntentService {
 
         final ApiGetOrganizationsTask apiGetOrganizationsTask = new ApiGetOrganizationsTask();
         final List<Organization> result = apiGetOrganizationsTask.doInBackground();
-        Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
         if (result != null && !result.isEmpty()) {
+
+            Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
             mApiOrganizationList = mSupport.deleteNullPropertiesObjects(result);
             Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
@@ -150,11 +151,12 @@ public class CustomService extends IntentService {
 
         final DbGetOrganizationsTask dbGetOrganizationsTask = new DbGetOrganizationsTask(CustomService.this);
         final List<Organization> result = dbGetOrganizationsTask.doInBackground();
-        Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()));
 
         if (result != null && !result.isEmpty()) {
 
-            mDbOrganizationList = result;
+            Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()));
+
+            mDbOrganizationList = mSupport.sortList(result);
             Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
 
         } else {

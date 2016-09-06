@@ -40,6 +40,7 @@ public class DbGetOrganizationsTask {
             mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
             final String[] projection = {
+                    DatabaseHelper.COLUMN_DATABASE_ID,
                     DatabaseHelper.COLUMN_ORGANIZATION_ID,
                     DatabaseHelper.COLUMN_ORGANIZATION_NAME,
                     DatabaseHelper.COLUMN_ORGANIZATION_TYPE,
@@ -57,6 +58,7 @@ public class DbGetOrganizationsTask {
 
             while (mCursor.moveToNext()) {
 
+                final int databaseId = mCursor.getInt(mCursor.getColumnIndex(DatabaseHelper.COLUMN_DATABASE_ID));
                 final String id = mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COLUMN_ORGANIZATION_ID));
                 final String name = mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COLUMN_ORGANIZATION_NAME));
                 final String type = mCursor.getString(mCursor.getColumnIndex(DatabaseHelper.COLUMN_ORGANIZATION_TYPE));
@@ -75,6 +77,7 @@ public class DbGetOrganizationsTask {
 
                 final Organization organization = new Organization();
 
+                organization.setDatabaseId(databaseId);
                 organization.setId(id);
                 organization.setName(name);
                 organization.setType(type);

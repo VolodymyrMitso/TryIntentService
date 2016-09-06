@@ -78,36 +78,28 @@ public class Support {
             return new ArrayList<>(_dbOrganizationList);
 
         final List<Organization> combinedOrganizationList = new ArrayList<>();
-
         combinedOrganizationList.addAll(_dbOrganizationList);
+        combinedOrganizationList.addAll(_apiOrganizationList);
 
-        for (Organization apiOrganization : _apiOrganizationList) {
-
-            if (!combinedOrganizationList.contains(apiOrganization))
-                combinedOrganizationList.add(apiOrganization);
-        }
+        final List<Organization> removeOrganizationList = new ArrayList<>();
 
         for (int i = 0; i < combinedOrganizationList.size(); i++) {
 
-            for (int j = 0; j < combinedOrganizationList.size(); ) {
+            for (int j = i + 1; j < combinedOrganizationList.size(); j++) {
 
                 final Organization organizationI = combinedOrganizationList.get(i);
                 final Organization organizationJ = combinedOrganizationList.get(j);
 
-                if (i != j) {
+                if (organizationI.getId().equals(organizationJ.getId())) {
 
-                    if (organizationI.getId().equals(organizationJ.getId()) && organizationI.getDate().after(organizationJ.getDate())) {
+                    organizationJ.setDatabaseId(organizationI.getDatabaseId());
 
-                        combinedOrganizationList.remove(j);
-                        j = 0;
-                        i = 0;
-
-                    } else
-                        j++;
-                } else
-                    j++;
+                    removeOrganizationList.add(organizationI);
+                }
             }
         }
+
+        combinedOrganizationList.removeAll(removeOrganizationList);
 
         Collections.sort(combinedOrganizationList);
 
@@ -137,6 +129,14 @@ public class Support {
         }
 
         return checkedOrganizationList;
+    }
+
+    public List<Organization> sortList(List<Organization> _organizationList) {
+
+        final List<Organization> sortedList = new ArrayList<>(_organizationList);
+        Collections.sort(sortedList);
+
+        return sortedList;
     }
 
     public void showProgressDialog(ProgressDialog _progressDialog) {

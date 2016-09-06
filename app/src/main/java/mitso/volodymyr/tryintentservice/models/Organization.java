@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Organization implements Parcelable, Comparable<Organization> {
 
+    private int                 databaseId;
     private String              id;
     private String              name;
     private String              type;
@@ -26,25 +27,6 @@ public class Organization implements Parcelable, Comparable<Organization> {
     }
 
     @Override
-    public boolean equals(Object _object) {
-
-        if (this == _object) return true;
-        if (!(_object instanceof Organization)) return false;
-
-        final Organization that = (Organization) _object;
-
-        return getId().equals(that.getId()) && getDate().equals(that.getDate());
-    }
-
-    @Override
-    public int hashCode() {
-
-        int result = getId().hashCode();
-        result = 31 * result + getDate().hashCode();
-        return result;
-    }
-
-    @Override
     public int compareTo(@NonNull Organization _that) {
 
         return this.getName().toLowerCase().compareTo(_that.getName().toLowerCase());
@@ -54,7 +36,8 @@ public class Organization implements Parcelable, Comparable<Organization> {
     public String toString() {
 
         return "Organization{" +
-                "id='" + id + '\'' +
+                "databaseId=" + databaseId +
+                ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", region='" + region + '\'' +
@@ -71,6 +54,7 @@ public class Organization implements Parcelable, Comparable<Organization> {
 
     protected Organization(Parcel _in) {
 
+        databaseId = _in.readInt();
         id = _in.readString();
         name = _in.readString();
         type = _in.readString();
@@ -98,6 +82,7 @@ public class Organization implements Parcelable, Comparable<Organization> {
     @Override
     public void writeToParcel(Parcel _dest, int _flags) {
 
+        _dest.writeInt(databaseId);
         _dest.writeString(id);
         _dest.writeString(name);
         _dest.writeString(type);
@@ -131,6 +116,13 @@ public class Organization implements Parcelable, Comparable<Organization> {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public int getDatabaseId() {
+        return databaseId;
+    }
+
+    public void setDatabaseId(int databaseId) {
+        this.databaseId = databaseId;
+    }
 
     public String getId() {
         return id;

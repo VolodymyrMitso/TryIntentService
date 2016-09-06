@@ -2,7 +2,6 @@ package mitso.volodymyr.tryintentservice.database.tasks;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -35,17 +34,6 @@ public class DbSaveOrganizationsTask {
         try {
             mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
-            long numberOfRows  = DatabaseUtils.queryNumEntries(mSQLiteDatabase, DatabaseHelper.DATABASE_TABLE);
-
-            if (numberOfRows > 0) {
-
-                mSQLiteDatabase.delete(DatabaseHelper.DATABASE_TABLE, null, null);
-
-                Log.i(LOG_TAG, "REWRITING DATABASE.");
-
-            } else
-                Log.i(LOG_TAG, "CREATING DATABASE FIRST TIME.");
-
             for (int i = 0; i < mOrganizationList.size(); i++) {
 
                 final Organization organization = mOrganizationList.get(i);
@@ -67,7 +55,15 @@ public class DbSaveOrganizationsTask {
                 final String dateString = new SimpleDateFormat(Constants.DATE_AND_TIME_DB_FORMAT, Locale.getDefault()).format(organization.getDate());
                 contentValues.put(DatabaseHelper.COLUMN_ORGANIZATION_DATE, dateString);
 
-                mSQLiteDatabase.insert(DatabaseHelper.DATABASE_TABLE, null, contentValues);
+                if (organization.getDatabaseId() == 0) {
+
+                    mSQLiteDatabase.insert(DatabaseHelper.DATABASE_TABLE, null, contentValues);
+
+                } else {
+
+                    mSQLiteDatabase.update(DatabaseHelper.DATABASE_TABLE, contentValues,
+                            DatabaseHelper.COLUMN_DATABASE_ID + DatabaseHelper.EQUALS + organization.getDatabaseId(), null);
+                }
             }
 
         } catch (Exception _error) {
