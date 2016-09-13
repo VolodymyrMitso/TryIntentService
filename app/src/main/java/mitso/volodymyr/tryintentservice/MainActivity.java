@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final Date endDate = new Date();
                 long delay = endDate.getTime() - startDate.getTime();
-                Log.i(LOG_TAG, "DELAY = " + delay);
+                Log.i(LOG_TAG, "DELAY = " + delay + ".");
 
                 mServiceResultReceiver.releaseCallback();
             }

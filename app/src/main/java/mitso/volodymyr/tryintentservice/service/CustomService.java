@@ -154,7 +154,7 @@ public class CustomService extends IntentService {
 
         if (result != null && !result.isEmpty()) {
 
-            Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()));
+            Log.i(dbGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
             mDbOrganizationList = mSupport.sortList(result);
             Log.i(LOG_TAG, "DB LIST SIZE: " + String.valueOf(mDbOrganizationList.size()) + ".");
@@ -169,7 +169,7 @@ public class CustomService extends IntentService {
         if (isNetworkOnline) {
 
             final boolean areDatesTheSame = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
-            Log.i(LOG_TAG, "DATE ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
+            Log.i(LOG_TAG, "DATES ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
 
             if (areDatesTheSame) {
 
