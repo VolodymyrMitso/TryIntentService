@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,13 +22,13 @@ import mitso.volodymyr.tryintentservice.service.AlarmReceiver;
 
 public class Support {
 
-    public void scheduleAlarm(Context _context) {
+    public void scheduleAlarm(Context _context, int _triggerAfter) {
 
-        final Intent alarmIntent = new Intent(_context.getApplicationContext(), AlarmReceiver.class);
+        final Intent alarmIntent = new Intent(_context, AlarmReceiver.class);
         final PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(_context, Constants.ALARM_REQUEST_CODE, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         final AlarmManager alarmManager = (AlarmManager) _context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Constants.TIME_5_MINUTES, AlarmManager.INTERVAL_HALF_HOUR, alarmPendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + _triggerAfter, AlarmManager.INTERVAL_HOUR, alarmPendingIntent);
     }
 
     public boolean checkNetworkConnection(Context _context) {
@@ -106,7 +105,7 @@ public class Support {
         return combinedOrganizationList;
     }
 
-    public List<Organization> deleteNullPropertiesObjects(List<Organization> _organizationList) {
+    public List<Organization> deleteNullFieldsObjects(List<Organization> _organizationList) {
 
         final List<Organization> checkedOrganizationList = new ArrayList<>(_organizationList);
 
@@ -149,17 +148,10 @@ public class Support {
         }
     }
 
-    public void dismissProgressDialog(final ProgressDialog _progressDialog) {
+    public void dismissProgressDialog(ProgressDialog _progressDialog) {
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if (_progressDialog != null && _progressDialog.isShowing())
-                    _progressDialog.dismiss();
-            }
-        }, Constants.TIME_333_MS);
+        if (_progressDialog != null && _progressDialog.isShowing())
+            _progressDialog.dismiss();
     }
 
     public void showToastFirstRun(final Context _context) {

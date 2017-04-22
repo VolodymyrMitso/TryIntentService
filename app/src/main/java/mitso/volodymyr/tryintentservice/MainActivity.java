@@ -4,11 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.util.Date;
 import java.util.List;
 
 import mitso.volodymyr.tryintentservice.constants.Constants;
@@ -26,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Support                     mSupport;
 
-    private ServiceResultReceiver       mServiceResultReceiver;
-
     private ProgressDialog              mProgressDialog;
+
+    private ServiceResultReceiver       mServiceResultReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSupport.showProgressDialog(mProgressDialog);
 
-        final Date startDate = new Date();
-
-        mServiceResultReceiver = new ServiceResultReceiver(new Handler());
+        mServiceResultReceiver = new ServiceResultReceiver();
         mServiceResultReceiver.setCallback(new ServiceResultReceiver.Callback() {
             @Override
             public void onReceiveResult(int _resultCode, Bundle _resultData) {
@@ -66,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(LOG_TAG, organizationList.get(0).toString());
                         Log.i(LOG_TAG, organizationList.get(organizationList.size() - 1).toString());
 
-                        mBinding.tv1.setText(organizationList.get(0).toString());
-                        mBinding.tv2.setText(organizationList.get(organizationList.size() - 1).toString());
+                        mBinding.tvFirstOrgAm.setText(organizationList.get(0).toString());
+                        mBinding.tvLastOrgAm.setText(organizationList.get(organizationList.size() - 1).toString());
 
                         mSupport.dismissProgressDialog(mProgressDialog);
 
@@ -81,11 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                mSupport.scheduleAlarm(MainActivity.this);
-
-                final Date endDate = new Date();
-                long delay = endDate.getTime() - startDate.getTime();
-                Log.i(LOG_TAG, "DELAY = " + delay + ".");
+                mSupport.scheduleAlarm(MainActivity.this, Constants.TIME_60_MINUTES);
 
                 mServiceResultReceiver.releaseCallback();
             }

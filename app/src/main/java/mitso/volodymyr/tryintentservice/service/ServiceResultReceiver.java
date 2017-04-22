@@ -19,9 +19,9 @@ public class ServiceResultReceiver extends ResultReceiver {
 
     private Callback            mCallback;
 
-    public ServiceResultReceiver(Handler _handler) {
+    public ServiceResultReceiver() {
 
-        super(_handler);
+        super(new Handler());
     }
 
     public void setCallback(Callback _callback) {

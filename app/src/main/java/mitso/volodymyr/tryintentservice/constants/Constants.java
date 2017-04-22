@@ -5,7 +5,7 @@ public class Constants {
     public static final int ALARM_REQUEST_CODE      = 789;
 
     public static final int TIME_5_MINUTES      = 5 * 60 * 1000;
-    public static final int TIME_333_MS         = 333;
+    public static final int TIME_60_MINUTES     = 60 * 60 * 1000;
 
     public static final String CUSTOM_SERVICE_LOG_TAG                   = "_____CUSTOM_SERVICE_LOG_TAG";
     public static final String MAIN_ACTIVITY_LOG_TAG                    = "_____MAIN_ACTIVITY_LOG_TAG";

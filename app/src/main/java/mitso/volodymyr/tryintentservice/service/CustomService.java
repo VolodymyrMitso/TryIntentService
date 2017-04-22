@@ -41,8 +41,7 @@ public class CustomService extends IntentService {
     @Override
     protected void onHandleIntent(final Intent _intent) {
 
-        mSupport = new Support();
-
+        initSupport();
         initResultReceiver(_intent);
 
         if (mSupport.checkDatabaseExistence(this)) {
@@ -97,6 +96,11 @@ public class CustomService extends IntentService {
         }
     }
 
+    private void initSupport() {
+
+        mSupport = new Support();
+    }
+
     private void initResultReceiver(Intent _intent) {
 
         mResultReceiver = _intent.getParcelableExtra(Constants.SERVICE_RESULT_RECEIVER_BUNDLE_KEY);
@@ -127,15 +131,15 @@ public class CustomService extends IntentService {
 
             Log.i(apiGetOrganizationsTask.LOG_TAG, String.valueOf(result.size()) + ".");
 
-            mApiOrganizationList = mSupport.deleteNullPropertiesObjects(result);
+            mApiOrganizationList = mSupport.deleteNullFieldsObjects(result);
             Log.i(LOG_TAG, "API LIST SIZE: " + String.valueOf(mApiOrganizationList.size()) + ".");
 
         } else {
 
             Log.e(LOG_TAG, "API LIST IS NULL OR EMPTY.");
-        }
 
-        // TODO: handle null or empty api list scenario.
+            // handle null or empty api list scenario.
+        }
 
         if (isDatabaseCreated) {
 
@@ -162,16 +166,16 @@ public class CustomService extends IntentService {
         } else {
 
             Log.e(LOG_TAG, "DB LIST IS NULL OR EMPTY.");
-        }
 
-        // TODO: handle null or empty db list scenario.
+            // handle null or empty db list scenario.
+        }
 
         if (isNetworkOnline) {
 
-            final boolean areDatesTheSame = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
-            Log.i(LOG_TAG, "DATES ARE EQUAL = " + String.valueOf(areDatesTheSame).toUpperCase() + ".");
+            final boolean areDatesEqual = mSupport.checkDatesEquality(mDbOrganizationList, mApiOrganizationList);
+            Log.i(LOG_TAG, "DATES ARE EQUAL = " + String.valueOf(areDatesEqual).toUpperCase() + ".");
 
-            if (areDatesTheSame) {
+            if (areDatesEqual) {
 
                 if (!isResultReceiverNull)
                     resultReceiverSendResult(mDbOrganizationList);
